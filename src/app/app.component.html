@@ -1,0 +1,164 @@
+<h1>Demo Angular: Template Driven Forms</h1>
+<p>These are using the <code>ngForm</code> and <code>ngModel</code> directives. (FormsModule) @angular/forms</p>
+<hr>
+<h2>Please populate or modify the following fields:</h2>
+<p color="accent">*<em>and observe the changes in the output below, take note of the comments as seen in the field's hint</em></p>
+
+<mat-card>
+  <form #demoform="ngForm" (ngSubmit)="onSubmit(demoform)">
+    
+  <!-- #demoform
+    the '#<name>' syntax -- creates a variable
+    in this case, the ngForm directive is assigned to the variable 'demoform'
+    
+    Otherwise, when no value is assigned:
+    By default, it will be the DOM element,
+  -->
+
+    <p>
+      <mat-form-field appearance="fill">
+        <mat-label>Name</mat-label>
+        <input #name="ngModel" matInput placeholder="Enter your name here" [ngModel]="classmodel.name" name="name" required minlength="5">
+        <mat-icon matSuffix>account_box</mat-icon>
+        <mat-hint>Uses 1-way data binding with classmodel</mat-hint>
+        <mat-error *ngIf="name.errors?.required">Hey, this is required</mat-error>
+        <mat-error *ngIf="name.errors?.minlength">Hey, min char is {{ name.errors.minlength.requiredLength }}</mat-error>
+      </mat-form-field>
+  
+      
+      <mat-form-field hintLabel="Max 10 characters" appearance="fill">
+        <mat-label>Phone</mat-label>
+        <input matInput placeholder="Enter your phone number" maxlength="10" ngModel name="phone">
+        <mat-icon matSuffix>phone</mat-icon>
+        <mat-hint align="end">{{demoform.value.phone?.length || 0}}/10</mat-hint>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>Email</mat-label>
+        <input #email="ngModel" matInput placeholder="Enter your email address" [(ngModel)]="classmodel.email" name="email" required email>
+        <mat-icon matSuffix>email</mat-icon>
+        <!-- <span matSuffix>@email.com</span> -->
+        <mat-hint>Uses 2-way data binding with classmodel</mat-hint>
+        <mat-error *ngIf="email.errors?.required">This is a required field</mat-error>
+        <mat-error *ngIf="email.errors?.email">Proper email is required</mat-error>
+      </mat-form-field>
+  
+      <mat-form-field appearance="fill">
+        <mat-label>I am interested in</mat-label>
+        <mat-select ngModel name="topic">
+          <mat-option *ngFor="let topic of topics" [value]="topic">{{ topic }}</mat-option>
+        </mat-select>
+        <mat-icon matPrefix>favorite</mat-icon>
+        <mat-hint align="end">Here's the dropdown arrow ^</mat-hint>
+      </mat-form-field>  
+    </p>
+    
+    <p>
+      
+      <label>Pick a time preference</label>
+      <mat-radio-group ngModel name="timePreference">
+        <mat-radio-button value="morning">Morning (9:00am - 9:30am)</mat-radio-button>
+        <mat-radio-button value="afternoon">Afternoon (2:00pm - 2:30pm)</mat-radio-button>
+      </mat-radio-group>
+      
+    </p>
+  
+    <br><hr>
+    <h3>Address information</h3>
+    <div ngModelGroup="address">
+      <p>
+        <mat-form-field appearance="fill">
+          <mat-label>Street</mat-label>
+          <input #street="ngModel" matInput placeholder="Enter your street address" ngModel name="street">
+          <mat-hint>
+            Also a 1-way data binding
+            <br>
+            Untouched = <strong>{{ street.untouched }}</strong>
+            <br>
+            Pristine = <strong>{{ street.pristine }}</strong>
+            <br>
+            Dirty = <strong>{{ street.dirty }}</strong>
+          </mat-hint>
+          <!-- #street
+            the '#<name>' syntax -- creates a variable
+            in this case, the ngModel directive is assigned to the variable 'street'
+            
+            Otherwise, when no value is assigned:
+            By default, it will be the DOM element,
+          -->
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill">
+          <mat-label>City</mat-label>
+          <input matInput placeholder="Enter your city address" [(ngModel)]="classmodel.address.city" name="city">
+          <mat-hint>Also 2-way data binding</mat-hint>
+        </mat-form-field>
+  
+        <mat-form-field appearance="fill">
+          <mat-label>Postal code</mat-label>
+          <input #phone="ngModel" matInput placeholder="Enter your postal code" [(ngModel)]="classmodel.address.postalCode" name="postalCode" pattern="^\d{5}$" required>
+          <mat-hint>This has validation using ngModel</mat-hint>
+          <mat-error *ngIf="phone.errors?.pattern">Please enter a 5-digit number only</mat-error>
+          <mat-error *ngIf="phone.errors?.required">This is a required field!</mat-error>
+          <!-- 
+            phone.errors?.pattern 
+              --- is a shorthand for ---
+            phone.errors && phone.errors.pattern
+          -->
+
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Enter your password</mat-label>
+            <input matInput [type]="hide ? 'password' : 'text'">
+            <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'" [attr.aria-pressed]="hide">
+              <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
+            </button>
+            <mat-hint>No form validations. Just displays password feature field for Material</mat-hint>
+        </mat-form-field>    
+  
+      </p>
+    </div>
+
+    <p>
+      <mat-checkbox [(ngModel)]="classmodel.uaenaSubscription" name="uaenaSubscription">Subscribe me to UAENA</mat-checkbox>
+    </p>
+
+    
+    <p style="text-align:right">
+      <button [disabled]="demoform.form.invalid || submitted" type="submit" mat-raised-button color="primary">{{ submitted ? 'Form was submitted. THank you' : 'Submit form'}}</button>
+    </p>
+    <p style="text-align:right" *ngIf="submitted">
+      Please see browser's console log
+    </p>    
+  
+  </form>
+</mat-card>
+
+<br><br>
+<h1>Results</h1>
+
+<p><strong>ngForm</strong> output:</p>
+<pre>{{ demoform.value | json }}</pre>
+
+<br>
+<p><strong>Class model</strong> output:</p>
+<pre>{{ classmodel | json }}</pre>
+
+<br><br>
+<hr>
+<h1>Important note</h1>
+<pre>
+    It looks like you're using ngModel on the same form field as formControl.
+    Support for using the ngModel input property and ngModelChange event with
+    reactive form directives has been deprecated in Angular v6 and will be removed
+    in a future version of Angular.
+
+    For more information on this, see our API docs here:
+    https://angular.io/api/forms/FormControlDirective#use-with-ngmodel
+</pre>
+
+<footer>
+  <p><strong>References</strong></p>
+  <p>Angular Forms Tutorial - 1 --> 15<br><a href="https://youtube.com/playlist?list=PLC3y8-rFHvwhwL-XH04cHOpJnkgRKykFi" target="_blank">https://youtube.com/playlist?list=PLC3y8-rFHvwhwL-XH04cHOpJnkgRKykFi <mat-icon>launch</mat-icon></a></p>
+</footer>
