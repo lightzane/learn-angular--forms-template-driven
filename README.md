@@ -4,7 +4,7 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 11.2.4.
 
-`npm install`
+Run `npm install` after cloning from Github
 
 ## Development server
 
